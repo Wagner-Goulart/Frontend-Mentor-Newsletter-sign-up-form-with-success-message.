@@ -2,16 +2,28 @@ import { useState } from 'react'
 import check from '../../assets/icon-success.svg'
 import { StyledList, StyledDiv } from './leftCardStyles'
 import { ErrorMsg } from '../errorMsg/erroMsg'
+import { useNavigate } from "react-router-dom"
 
-function LeftCards() {
+const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+
+    return re.test(email)
+}
+
+function LeftCard() {
 
     const [email, setEmail] = useState('')
     const [erroMsg, setErroMsg] = useState('')
-    const [validInput, setValidInput] = useState(false)
+    const [invalidInput, setInValidInput] = useState(false)
+    const navigate = useNavigate()
+
+    const saveEmail = (email)=>{
+        localStorage.setItem('email', JSON.stringify(email))
+    }
 
     const inputStyle = {
-        backgroundColor: validInput ? '#f3ccc8' : '',
-        borderColor: validInput ? '#ee7e76' : ''
+        backgroundColor: invalidInput ? '#f3ccc8' : '',
+        borderColor: invalidInput ? '#ee7e76' : '',
     }
 
 
@@ -37,22 +49,22 @@ function LeftCards() {
                     <span className='form-title'>Email adress</span>
                     <ErrorMsg>{erroMsg}</ErrorMsg>
                 </div>
-                <input style={inputStyle} type="email" name="email" id="email" placeholder='email@company.com'  value={email} onChange={(e) => {
+                <input style={inputStyle} type="email" name="email" id="email" placeholder='email@company.com' value={email} onChange={(e) => {
                     setEmail(e.target.value)
                 }} />
-
-                <button type='submit' onClick={
-                    () => {
-                        if (email === '') {
-                            setErroMsg('Valid email required')
-                            setValidInput(true)
-                            return false
+                    <button type='submit' onClick={
+                        () => {
+                            saveEmail(email)
+                            if (!validateEmail(email)) {
+                                setErroMsg('Valid email required')
+                                setInValidInput(true)
+                                return false
+                            }
+                            navigate('/congratulations')
+                            setErroMsg('')
+                            setInValidInput(false)
                         }
-                        setErroMsg('')
-                        setValidInput(false)
-                    }
-                }>Subscribe to monthly newsletter</button>
-
+                    }>Subscribe to monthly newsletter</button>
             </div>
 
         </StyledDiv>
@@ -60,4 +72,4 @@ function LeftCards() {
     )
 }
 
-export { LeftCards }
+export { LeftCard }
