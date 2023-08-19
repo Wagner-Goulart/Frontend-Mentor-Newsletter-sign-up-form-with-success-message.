@@ -3,12 +3,8 @@ import check from '../../assets/icon-success.svg'
 import { StyledList, StyledDiv } from './leftCardStyles'
 import { ErrorMsg } from '../errorMsg/erroMsg'
 import { useNavigate } from "react-router-dom"
-
-const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
-
-    return re.test(email)
-}
+import { validateEmail } from '../../services/validateEmail'
+import { setEmailOnLocalStorage } from '../../services/setEmailOnLocalStorage'
 
 function LeftCard() {
 
@@ -17,15 +13,23 @@ function LeftCard() {
     const [invalidInput, setInValidInput] = useState(false)
     const navigate = useNavigate()
 
-    const saveEmail = (email)=>{
-        localStorage.setItem('email', JSON.stringify(email))
-    }
-
     const inputStyle = {
         backgroundColor: invalidInput ? '#f3ccc8' : '',
         borderColor: invalidInput ? '#ee7e76' : '',
     }
 
+    const handleClick = () => {
+        setEmailOnLocalStorage(email)
+        if (!validateEmail(email)) {
+            setErroMsg('Valid email required')
+            setInValidInput(true)
+            return
+        }
+
+        navigate('/congratulations')
+        setErroMsg('')
+        setInValidInput(false)
+    }
 
     return (
         <StyledDiv>
@@ -52,21 +56,8 @@ function LeftCard() {
                 <input style={inputStyle} type="email" name="email" id="email" placeholder='email@company.com' value={email} onChange={(e) => {
                     setEmail(e.target.value)
                 }} />
-                    <button type='submit' onClick={
-                        () => {
-                            saveEmail(email)
-                            if (!validateEmail(email)) {
-                                setErroMsg('Valid email required')
-                                setInValidInput(true)
-                                return false
-                            }
-                            navigate('/congratulations')
-                            setErroMsg('')
-                            setInValidInput(false)
-                        }
-                    }>Subscribe to monthly newsletter</button>
+                <button type='submit' onClick={() => { handleClick() }}>Subscribe to monthly newsletter</button>
             </div>
-
         </StyledDiv>
 
     )

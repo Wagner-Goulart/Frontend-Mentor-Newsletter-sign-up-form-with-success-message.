@@ -1,20 +1,21 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { ValidationMsg } from "../components/validationMsg/validationMsg";
 import { Home } from "./home";
-import { PrivateRoutes } from "./privateRoutes";
+import { AnimatePresence } from "framer-motion";
+
 
 function AppRoutes() {
+
+    const location = useLocation()
+
     return (
-        <BrowserRouter>
-            <Routes>
+        <AnimatePresence mode="wait">
+            <Routes location={location} key={location}>
                 <Route exact path="/" element={<Home />} />
-                <Route exact path="/congratulations" element={
-                    <PrivateRoutes>
-                        <ValidationMsg />
-                    </PrivateRoutes>
-                } />
+                <Route exact path="/congratulations" element={<ValidationMsg />} />
             </Routes>
-        </BrowserRouter>
+        </AnimatePresence>
+
     )
 }
 
